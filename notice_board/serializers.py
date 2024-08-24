@@ -3,7 +3,7 @@ from rest_framework import serializers
 from notice_board.models import Ad, Comment
 
 
-class AdSerializers(serializers.ModelSerializer):
+class AdSerializer(serializers.ModelSerializer):
     """
     Сериализатор для модели Ad, представляющий краткую информацию о товаре.
     """
@@ -51,5 +51,5 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ('pk', 'text', 'author_id', 'created_at', 'author_firs_name',
+        fields = ('pk', 'text', 'author_id', 'created_at', 'author_first_name',
                   'author_last_name', 'ad_id', 'author_image',)
