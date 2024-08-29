@@ -1,14 +1,14 @@
-#Доска объявлений
+# Доска объявлений
 
 
-##Технологии использованные в проекте
+## Технологии использованные в проекте
 - Python 3.12
 - Django 5.0.6
 - DRF 3.15.2
 - PostgreSQL
 - Docker
 
-##Функции
+## Функции
 - авторизация и аутентификация пользователей
 - распределение ролей между польщзователями (пользователь и админ)
 - восстановление пароля через электронную почту
@@ -17,14 +17,14 @@
 - разграничение прав доступа (админ может удалять или редактировать все объявления и отзывы, а пользователь может удалять и редактировать только свои объявления и комментарии
 
 
-##Инструкция по развертыванию проекта
+## Инструкция по развертыванию проекта
 **<span style="color:green">Клонировать репозиторий:</span>**
 
 ```
 git@github.com:petrovi-4/notice_board.git
 ```
 
-###<span style="color:red">Из Docker контейнера</span>
+### <span style="color:red">Из Docker контейнера</span>
 
 **<span style="color:green">Настройка окружения</span>**
 
@@ -57,7 +57,7 @@ docker-compose down
 ```
 
 
-###<span style="color:red">Без Docker</span>
+### <span style="color:red">Без Docker</span>
 
 **<span style="color:green">Создать и активировать виртуальное окружение:</span>**
 
@@ -112,7 +112,7 @@ python manage.py loaddata ad_data.json
 python manage.py loaddata comment_data.json
 ```
 
-###**<span style="color:red">Документация API:</span>**
+### **<span style="color:red">Документация API:</span>**
 
 ```
 http://127.0.0.1:8000/swagger/
