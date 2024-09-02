@@ -46,7 +46,8 @@ class CommentSerializer(serializers.ModelSerializer):
     )
     author_image = serializers.ImageField(
         read_only=True,
-        source='author.avatar'
+        source='author.avatar',
+        allow_null=True
     )
 
     class Meta:

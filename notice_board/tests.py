@@ -1,4 +1,7 @@
+from io import BytesIO
+from PIL import Image
 import pytest
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from rest_framework.test import APIClient
 from rest_framework import status
 from django.contrib.auth import get_user_model
@@ -137,3 +140,98 @@ def test_list_comments(authenticated_client, comment):
     assert response.status_code == status.HTTP_200_OK
     assert len(response.data) == 1
     assert response.data[0]['text'] == comment.text
+
+
+@pytest.mark.django_db
+def test_ad_serializer(ad):
+    serializer = AdSerializer(ad)
+    data = serializer.data
+
+    assert data['pk'] == ad.pk
+    assert data['title'] == ad.title
+    assert data['description'] == ad.description
+    assert data['price'] == ad.price
+    assert data['image'] == ad.image
+
+
+@pytest.mark.django_db
+def test_ad_detail_serializer(ad):
+    serializer = AdDetailSerializer(ad)
+    data = serializer.data
+
+    assert data['pk'] == ad.pk
+    assert data['title'] == ad.title
+    assert data['description'] == ad.description
+    assert data['price'] == ad.price
+    assert data['image'] == ad.image
+    assert data['author_first_name'] == ad.author.first_name
+    assert data['author_last_name'] == ad.author.last_name
+    assert data['phone'] == ad.author.phone
+
+
+@pytest.mark.django_db
+def test_comment_serializer(comment):
+    serializer = CommentSerializer(comment)
+    data = serializer.data
+
+    assert data['pk'] == comment.pk
+    assert data['text'] == comment.text
+    assert data['ad_id'] == comment.ad.id
+    assert data['author_first_name'] == comment.author.first_name
+    assert data['author_last_name'] == comment.author.last_name
+
+
+@pytest.mark.django_db
+def test_ad_serializer_create(user):
+    data = {
+        'title': 'Test Ad',
+        'description': 'Test Description',
+        'price': 100,
+        'image': 'test_image.jpg'
+    }
+    serializer = AdSerializer(data=data)
+
+    if not serializer.is_valid():
+        print(serializer.errors)
+
+    assert serializer.is_valid()
+    ad = serializer.save(author=user)
+
+    assert ad.title == data['title']
+    assert ad.description == data['description']
+    assert ad.price == data['price']
+    assert ad.image == data['image']
+    assert ad.author == user
+
+
+@pytest.mark.django_db
+def test_ad_serializer_create(user):
+    # Создание тестового изображения
+    image = BytesIO()
+    img = Image.new('RGB', (100, 100), color='red')
+    img.save(image, format='JPEG')
+    image.seek(0)
+    uploaded_image = InMemoryUploadedFile(
+        file=image,
+        field_name='image',
+        name='test_image.jpg',
+        content_type='image/jpeg',
+        size=image.getbuffer().nbytes,
+        charset=None
+    )
+
+    data = {
+        'title': 'Test Ad',
+        'description': 'Test Description',
+        'price': 100,
+        'image': uploaded_image  # Используем тестовое изображение
+    }
+
+    serializer = AdSerializer(data=data)
+
+    assert serializer.is_valid()  # Убеждаемся, что данные валидны
+    ad = serializer.save(author=user)
+    assert ad.title == data['title']
+    assert ad.description == data['description']
+    assert ad.price == data['price']
+    assert ad.image.name.startswith('ads/test_image')
